@@ -21,275 +21,225 @@ public struct DetectiveProfileView: View {
     public var body: some View {
         ScrollView {
             VStack(spacing: 24) {
-                // Header Protocol Banner
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("DETECTIVE PROFILE & CRITERIA ACHIEVEMENTS")
-                        .font(.system(.headline, design: .monospaced))
-                        .foregroundColor(Color(red: 0.0, green: 0.9, blue: 0.2))
-                        .bold()
-                    Text("AGENCY DOSSIER REGISTRATION // SECURITY CREDENTIALS STATUS")
-                        .font(.system(.caption2, design: .monospaced))
-                        .foregroundColor(.gray)
-                }
-                .padding()
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(Color.black.opacity(0.6))
-                .overlay(Rectangle().stroke(Color.green.opacity(0.3), lineWidth: 1))
-                
-                // Agency Badge Card (Customizable)
-                VStack(spacing: 0) {
-                    // Badge Header
-                    HStack {
-                        Image(systemName: "shield.lefthalf.filled")
-                            .font(.system(size: 20))
-                            .foregroundColor(Color(red: 0.0, green: 0.9, blue: 0.2))
-                        
-                        Text("FEDERAL AGENCY OF COGNITIVE SECURITY")
-                            .font(.system(.caption, design: .monospaced))
-                            .bold()
-                            .foregroundColor(.white)
-                        
-                        Spacer()
-                        
-                        Text("CLASSIFIED STATUS: ACTIVE")
-                            .font(.system(.caption2, design: .monospaced))
-                            .foregroundColor(Color(red: 0.0, green: 0.9, blue: 0.2))
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, 2)
-                            .background(Color.green.opacity(0.15))
-                            .border(Color.green.opacity(0.5))
-                    }
-                    .padding()
-                    .background(Color.green.opacity(0.1))
-                    .border(Color.green.opacity(0.3), width: 1)
-                    
-                    // Badge Inner Body
-                    HStack(alignment: .top, spacing: 20) {
-                        // Left: Biometric Avatar Scanner
-                        VStack(spacing: 8) {
-                            ZStack {
-                                Color.black
-                                
-                                // Glowing background grid
-                                Canvas { context, size in
-                                    let lines = 5
-                                    let stepX = size.width / CGFloat(lines)
-                                    let stepY = size.height / CGFloat(lines)
-                                    for i in 0...lines {
-                                        let x = CGFloat(i) * stepX
-                                        context.stroke(Path { p in
-                                            p.move(to: CGPoint(x: x, y: 0))
-                                            p.addLine(to: CGPoint(x: x, y: size.height))
-                                        }, with: .color(Color.green.opacity(0.08)), lineWidth: 1)
-                                        
-                                        let y = CGFloat(i) * stepY
-                                        context.stroke(Path { p in
-                                            p.move(to: CGPoint(x: 0, y: y))
-                                            p.addLine(to: CGPoint(x: size.width, y: y))
-                                        }, with: .color(Color.green.opacity(0.08)), lineWidth: 1)
-                                    }
-                                }
-                                
-                                // Agent avatar drawing
-                                Image(systemName: "person.crop.square.fill")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .foregroundColor(Color(red: 0.0, green: 0.9, blue: 0.2).opacity(biometricPulse ? 0.35 : 0.25))
-                                    .padding(8)
-                                    .scaleEffect(biometricPulse ? 1.02 : 0.98)
-                                    .animation(.easeInOut(duration: 2.0).repeatForever(autoreverses: true), value: biometricPulse)
-                                
-                                // Biometric circular HUD
-                                Circle()
-                                    .stroke(Color.green.opacity(0.3), style: StrokeStyle(lineWidth: 1, dash: [4, 4]))
-                                    .frame(width: 70, height: 70)
-                                
-                                // Animated Scanline
-                                Rectangle()
-                                    .fill(
-                                        LinearGradient(
-                                            gradient: Gradient(colors: [.clear, Color.green.opacity(0.5), .clear]),
-                                            startPoint: .top,
-                                            endPoint: .bottom
-                                        )
-                                    )
-                                    .frame(height: 6)
-                                    .offset(y: scanLineOffset)
-                                    .onAppear {
-                                        withAnimation(Animation.linear(duration: 3.0).repeatForever(autoreverses: true)) {
-                                            scanLineOffset = 40
-                                        }
-                                        biometricPulse = true
-                                    }
-                            }
-                            .frame(width: 90, height: 95)
-                            .border(Color.green.opacity(0.5), lineWidth: 1)
-                            
-                            Text("BIOMETRIC SCAN OK")
-                                .font(.system(size: 8, design: .monospaced))
-                                .foregroundColor(Color(red: 0.0, green: 0.9, blue: 0.2))
-                                .bold()
-                        }
-                        
-                        // Right: Interactive Credentials Text Fields
-                        VStack(alignment: .leading, spacing: 10) {
-                            HStack(spacing: 8) {
-                                Text("CODENAME:")
-                                    .font(.system(.caption, design: .monospaced))
-                                    .foregroundColor(.gray)
-                                    .frame(width: 70, alignment: .leading)
-                                
-                                TextField("Investigator Name", text: $investigatorName)
-                                    .font(.system(.subheadline, design: .monospaced))
-                                    .foregroundColor(.white)
-                                    .bold()
-                                    .textFieldStyle(PlainTextFieldStyle())
-                                    .padding(.horizontal, 6)
-                                    .padding(.vertical, 4)
-                                    .background(Color.black.opacity(0.5))
-                                    .border(Color.green.opacity(0.4), lineWidth: 1)
-                            }
-                            
-                            HStack(spacing: 8) {
-                                Text("RANK:")
-                                    .font(.system(.caption, design: .monospaced))
-                                    .foregroundColor(.gray)
-                                    .frame(width: 70, alignment: .leading)
-                                
-                                TextField("Investigator Rank", text: $investigatorRank)
-                                    .font(.system(.subheadline, design: .monospaced))
-                                    .foregroundColor(.white)
-                                    .bold()
-                                    .textFieldStyle(PlainTextFieldStyle())
-                                    .padding(.horizontal, 6)
-                                    .padding(.vertical, 4)
-                                    .background(Color.black.opacity(0.5))
-                                    .border(Color.green.opacity(0.4), lineWidth: 1)
-                            }
-                            
-                            HStack(spacing: 8) {
-                                Text("BADGE ID:")
-                                    .font(.system(.caption, design: .monospaced))
-                                    .foregroundColor(.gray)
-                                    .frame(width: 70, alignment: .leading)
-                                
-                                TextField("Badge ID", text: $investigatorBadgeID)
-                                    .font(.system(.subheadline, design: .monospaced))
-                                    .foregroundColor(.white)
-                                    .bold()
-                                    .textFieldStyle(PlainTextFieldStyle())
-                                    .padding(.horizontal, 6)
-                                    .padding(.vertical, 4)
-                                    .background(Color.black.opacity(0.5))
-                                    .border(Color.green.opacity(0.4), lineWidth: 1)
-                            }
-                            
-                            HStack {
-                                Text("CLEARANCE:")
-                                    .font(.system(.caption2, design: .monospaced))
-                                    .foregroundColor(.gray)
-                                Text("LEVEL 4 OMNISCIENT")
-                                    .font(.system(.caption2, design: .monospaced))
-                                    .foregroundColor(.yellow)
-                                Spacer()
-                                Text("SEC: BLACKBOX")
-                                    .font(.system(.caption2, design: .monospaced))
-                                    .foregroundColor(.gray)
-                            }
-                            .padding(.top, 4)
-                        }
-                    }
-                    .padding()
-                    .background(Color.black.opacity(0.3))
-                    
-                    // Simulated Digital Barcode at the bottom
-                    VStack(spacing: 2) {
-                        Divider().background(Color.green.opacity(0.3))
-                        HStack(spacing: 1.5) {
-                            ForEach(0..<45, id: \.self) { i in
-                                Rectangle()
-                                    .fill(Color.green.opacity(0.6))
-                                    .frame(width: CGFloat([1, 2, 3, 1.5][i % 4]), height: 18)
-                            }
-                            Spacer()
-                            Text("SYS REG: \(investigatorBadgeID.uppercased())")
-                                .font(.system(size: 8, design: .monospaced))
-                                .foregroundColor(.green.opacity(0.6))
-                        }
-                        .padding(.horizontal)
-                        .padding(.vertical, 6)
-                    }
-                    .background(Color.black.opacity(0.5))
-                }
-                .border(Color.green.opacity(0.5), lineWidth: 1.5)
-                .shadow(color: Color.green.opacity(0.08), radius: 10)
-                
-                // Achievements Title Section
-                VStack(alignment: .leading, spacing: 6) {
-                    HStack {
-                        Text("INVESTIGATIVE ACHIEVEMENT MILESTONES")
-                            .font(.system(.subheadline, design: .monospaced))
-                            .bold()
-                            .foregroundColor(.white)
-                        Spacer()
-                        
-                        let totalUnlocked = (isDecryptionSpecialistUnlocked ? 1 : 0) +
-                                            (isAcousticExpertUnlocked ? 1 : 0) +
-                                            (isMasterTrackerUnlocked ? 1 : 0) +
-                                            (isCaseClosedUnlocked ? 1 : 0)
-                        Text("PROGRESS: \(totalUnlocked) / 4 UNLOCKED")
-                            .font(.system(.caption2, design: .monospaced))
-                            .foregroundColor(totalUnlocked == 4 ? Color.green : .yellow)
-                            .bold()
-                    }
-                    Divider().background(Color.green.opacity(0.3))
-                }
-                .padding(.top, 10)
-                
-                // Achievements Grid
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 280), spacing: 16)], spacing: 16) {
-                    // 1. Decryption Specialist
-                    AchievementCard(
-                        title: "DECRYPTION SPECIALIST",
-                        description: "Decrypt the burn phone ledger record database parameters.",
-                        condition: "Unlocked when ledger is decrypted in DB",
-                        isUnlocked: isDecryptionSpecialistUnlocked,
-                        iconName: "key.fill"
-                    )
-                    
-                    // 2. Acoustic Expert
-                    AchievementCard(
-                        title: "ACOUSTIC EXPERT",
-                        description: "Filter background environmental noise and isolate voiceprint tape forensics.",
-                        condition: "Unlocked when signal is solved",
-                        isUnlocked: isAcousticExpertUnlocked,
-                        iconName: "waveform.path.badge.plus"
-                    )
-                    
-                    // 3. Master Tracker
-                    AchievementCard(
-                        title: "MASTER TRACKER",
-                        description: "Align radio tower convergence loops to triangulate warehouse origin vector.",
-                        condition: "Unlocked when triangulation completed",
-                        isUnlocked: isMasterTrackerUnlocked,
-                        iconName: "location.magnifyingglass"
-                    )
-                    
-                    // 4. Case Closed
-                    AchievementCard(
-                        title: "CASE CLOSED",
-                        description: "Indict Vance with matching clue coordinates and close 'The Chemist's Recipe'.",
-                        condition: "Unlocked when case is solved in DB",
-                        isUnlocked: isCaseClosedUnlocked,
-                        iconName: "shield.checkered"
-                    )
-                }
+                headerPanel
+                badgeCard
+                achievementsTitleSection
+                achievementsGrid
             }
             .padding()
         }
         .background(Color(red: 0.05, green: 0.05, blue: 0.07).ignoresSafeArea())
         .onAppear {
             updateAchievements()
+        }
+    }
+    
+    // MARK: - Subviews
+    
+    private var headerPanel: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text("DETECTIVE PROFILE & CRITERIA ACHIEVEMENTS")
+                .font(.system(.headline, design: .monospaced))
+                .foregroundColor(Color(red: 0.0, green: 0.9, blue: 0.2))
+                .bold()
+            Text("AGENCY DOSSIER REGISTRATION // SECURITY CREDENTIALS STATUS")
+                .font(.system(.caption2, design: .monospaced))
+                .foregroundColor(.gray)
+        }
+        .padding()
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color.black.opacity(0.6))
+        .overlay(Rectangle().stroke(Color.green.opacity(0.3), lineWidth: 1))
+    }
+    
+    private var badgeCard: some View {
+        VStack(spacing: 0) {
+            // Badge Header
+            HStack {
+                Image(systemName: "shield.lefthalf.filled")
+                    .font(.system(size: 20))
+                    .foregroundColor(Color(red: 0.0, green: 0.9, blue: 0.2))
+                
+                Text("FEDERAL AGENCY OF COGNITIVE SECURITY")
+                    .font(.system(.caption, design: .monospaced))
+                    .bold()
+                    .foregroundColor(.white)
+                
+                Spacer()
+                
+                Text("CLASSIFIED STATUS: ACTIVE")
+                    .font(.system(.caption2, design: .monospaced))
+                    .foregroundColor(Color(red: 0.0, green: 0.9, blue: 0.2))
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 2)
+                    .background(Color.green.opacity(0.15))
+                    .border(Color.green.opacity(0.5), width: 1)
+            }
+            .padding()
+            .background(Color.green.opacity(0.1))
+            .border(Color.green.opacity(0.3), width: 1)
+            
+            // Badge Inner Body
+            HStack(alignment: .top, spacing: 20) {
+                // Left: Biometric Avatar Scanner
+                biometricScanner
+                
+                // Right: Interactive Credentials Text Fields
+                credentialsFields
+            }
+            .padding()
+            .background(Color.black.opacity(0.3))
+            
+            // Barcode Footer
+            barcodeFooter
+        }
+        .border(Color.green.opacity(0.5), width: 1.5)
+        .shadow(color: Color.green.opacity(0.08), radius: 10)
+    }
+    
+    private var biometricScanner: some View {
+        VStack(spacing: 8) {
+            ZStack {
+                Color.black
+                
+                // Glowing background grid
+                BiometricGridView()
+                
+                // Agent avatar drawing
+                Image(systemName: "person.crop.square.fill")
+                    .resizable()
+                    .scaledToFit()
+                    .foregroundColor(Color(red: 0.0, green: 0.9, blue: 0.2).opacity(biometricPulse ? 0.35 : 0.25))
+                    .padding(8)
+                    .scaleEffect(biometricPulse ? 1.02 : 0.98)
+                    .animation(.easeInOut(duration: 2.0).repeatForever(autoreverses: true), value: biometricPulse)
+                
+                // Biometric circular HUD
+                Circle()
+                    .stroke(Color.green.opacity(0.3), style: StrokeStyle(lineWidth: 1, dash: [4, 4]))
+                    .frame(width: 70, height: 70)
+                
+                // Animated Scanline
+                BiometricScanlineView(scanLineOffset: scanLineOffset)
+                    .onAppear {
+                        withAnimation(Animation.linear(duration: 3.0).repeatForever(autoreverses: true)) {
+                            scanLineOffset = 40
+                        }
+                        biometricPulse = true
+                    }
+            }
+            .frame(width: 90, height: 95)
+            .border(Color.green.opacity(0.5), width: 1)
+            
+            Text("BIOMETRIC SCAN OK")
+                .font(.system(size: 8, design: .monospaced))
+                .foregroundColor(Color(red: 0.0, green: 0.9, blue: 0.2))
+                .bold()
+        }
+    }
+    
+    private var credentialsFields: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            CredentialRow(label: "CODENAME:", placeholder: "Investigator Name", text: $investigatorName)
+            CredentialRow(label: "RANK:", placeholder: "Investigator Rank", text: $investigatorRank)
+            CredentialRow(label: "BADGE ID:", placeholder: "Badge ID", text: $investigatorBadgeID)
+            
+            HStack {
+                Text("CLEARANCE:")
+                    .font(.system(.caption2, design: .monospaced))
+                    .foregroundColor(.gray)
+                Text("LEVEL 4 OMNISCIENT")
+                    .font(.system(.caption2, design: .monospaced))
+                    .foregroundColor(.yellow)
+                Spacer()
+                Text("SEC: BLACKBOX")
+                    .font(.system(.caption2, design: .monospaced))
+                    .foregroundColor(.gray)
+            }
+            .padding(.top, 4)
+        }
+    }
+    
+    private var barcodeFooter: some View {
+        VStack(spacing: 2) {
+            Divider().background(Color.green.opacity(0.3))
+            HStack(spacing: 1.5) {
+                ForEach(0..<45, id: \.self) { i in
+                    Rectangle()
+                        .fill(Color.green.opacity(0.6))
+                        .frame(width: CGFloat([1, 2, 3, 1.5][i % 4]), height: 18)
+                }
+                Spacer()
+                Text("SYS REG: \(investigatorBadgeID.uppercased())")
+                    .font(.system(size: 8, design: .monospaced))
+                    .foregroundColor(.green.opacity(0.6))
+            }
+            .padding(.horizontal)
+            .padding(.vertical, 6)
+        }
+        .background(Color.black.opacity(0.5))
+    }
+    
+    private var achievementsTitleSection: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack {
+                Text("INVESTIGATIVE ACHIEVEMENT MILESTONES")
+                    .font(.system(.subheadline, design: .monospaced))
+                    .bold()
+                    .foregroundColor(.white)
+                Spacer()
+                
+                let totalUnlocked = (isDecryptionSpecialistUnlocked ? 1 : 0) +
+                                    (isAcousticExpertUnlocked ? 1 : 0) +
+                                    (isMasterTrackerUnlocked ? 1 : 0) +
+                                    (isCaseClosedUnlocked ? 1 : 0)
+                Text("PROGRESS: \(totalUnlocked) / 4 UNLOCKED")
+                    .font(.system(.caption2, design: .monospaced))
+                    .foregroundColor(totalUnlocked == 4 ? Color.green : .yellow)
+                    .bold()
+            }
+            Divider().background(Color.green.opacity(0.3))
+        }
+        .padding(.top, 10)
+    }
+    
+    private var achievementsGrid: some View {
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 280), spacing: 16)], spacing: 16) {
+            // 1. Decryption Specialist
+            AchievementCard(
+                title: "DECRYPTION SPECIALIST",
+                description: "Decrypt the burn phone ledger record database parameters.",
+                condition: "Unlocked when ledger is decrypted in DB",
+                isUnlocked: isDecryptionSpecialistUnlocked,
+                iconName: "key.fill"
+            )
+            
+            // 2. Acoustic Expert
+            AchievementCard(
+                title: "ACOUSTIC EXPERT",
+                description: "Filter background environmental noise and isolate voiceprint tape forensics.",
+                condition: "Unlocked when signal is solved",
+                isUnlocked: isAcousticExpertUnlocked,
+                iconName: "waveform.path.badge.plus"
+            )
+            
+            // 3. Master Tracker
+            AchievementCard(
+                title: "MASTER TRACKER",
+                description: "Align radio tower convergence loops to triangulate warehouse origin vector.",
+                condition: "Unlocked when triangulation completed",
+                isUnlocked: isMasterTrackerUnlocked,
+                iconName: "location.magnifyingglass"
+            )
+            
+            // 4. Case Closed
+            AchievementCard(
+                title: "CASE CLOSED",
+                description: "Indict Vance with matching clue coordinates and close 'The Chemist's Recipe'.",
+                condition: "Unlocked when case is solved in DB",
+                isUnlocked: isCaseClosedUnlocked,
+                iconName: "shield.checkered"
+            )
         }
     }
     
@@ -333,20 +283,52 @@ struct AchievementCard: View {
     let isUnlocked: Bool
     let iconName: String
     
+    private var badgeColor: Color {
+        isUnlocked ? Color(red: 0.0, green: 0.9, blue: 0.2) : Color.red
+    }
+    
+    private var badgeShadowColor: Color {
+        isUnlocked ? Color.green.opacity(0.8) : Color.clear
+    }
+    
+    private var imageSystemName: String {
+        isUnlocked ? iconName : "lock.fill"
+    }
+    
+    private var cardBorderColor: Color {
+        isUnlocked ? Color.green.opacity(0.4) : Color.red.opacity(0.2)
+    }
+    
+    private var imageBorderColor: Color {
+        isUnlocked ? Color.green.opacity(0.6) : Color.red.opacity(0.3)
+    }
+    
+    private var imageBackgroundColor: Color {
+        isUnlocked ? Color.green.opacity(0.05) : Color.red.opacity(0.02)
+    }
+    
+    private var cardBackground: Color {
+        Color.black
+    }
+    
+    private var cardOpacity: Double {
+        isUnlocked ? 0.3 : 0.15
+    }
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack(alignment: .center, spacing: 12) {
                 // Glow badge icon
                 ZStack {
                     Color.black
-                    Image(systemName: isUnlocked ? iconName : "lock.fill")
+                    Image(systemName: imageSystemName)
                         .font(.system(size: 20))
-                        .foregroundColor(isUnlocked ? Color(red: 0.0, green: 0.9, blue: 0.2) : .red)
-                        .shadow(color: isUnlocked ? Color.green.opacity(0.8) : .clear, radius: 4)
+                        .foregroundColor(badgeColor)
+                        .shadow(color: badgeShadowColor, radius: 4)
                 }
                 .frame(width: 44, height: 44)
-                .border(isUnlocked ? Color.green.opacity(0.6) : Color.red.opacity(0.3), lineWidth: 1.5)
-                .background(isUnlocked ? Color.green.opacity(0.05) : Color.red.opacity(0.02))
+                .border(imageBorderColor, width: 1.5)
+                .background(imageBackgroundColor)
                 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title)
@@ -374,16 +356,85 @@ struct AchievementCard: View {
                 .foregroundColor(isUnlocked ? .green.opacity(0.6) : .gray.opacity(0.6))
         }
         .padding()
-        .background(Color.black.opacity(isUnlocked ? 0.3 : 0.15))
-        .border(isUnlocked ? Color.green.opacity(0.4) : Color.red.opacity(0.2), lineWidth: 1)
+        .background(cardBackground.opacity(cardOpacity))
+        .border(cardBorderColor, width: 1)
         .overlay(
-            // Green glow line at the top of unlocked cards
             VStack {
-                Rectangle()
-                    .fill(isUnlocked ? Color(red: 0.0, green: 0.9, blue: 0.2) : Color.clear)
-                    .frame(height: 2)
+                if isUnlocked {
+                    Rectangle()
+                        .fill(Color(red: 0.0, green: 0.9, blue: 0.2))
+                        .frame(height: 2)
+                }
                 Spacer()
             }
         )
     }
 }
+
+// MARK: - Biometric Scanner Helper Views
+
+struct BiometricGridView: View {
+    var body: some View {
+        Canvas { context, size in
+            let lines = 5
+            let stepX = size.width / CGFloat(lines)
+            let stepY = size.height / CGFloat(lines)
+            for i in 0...lines {
+                let x = CGFloat(i) * stepX
+                var pX = Path()
+                pX.move(to: CGPoint(x: x, y: 0))
+                pX.addLine(to: CGPoint(x: x, y: size.height))
+                context.stroke(pX, with: .color(Color.green.opacity(0.08)), lineWidth: 1)
+                
+                let y = CGFloat(i) * stepY
+                var pY = Path()
+                pY.move(to: CGPoint(x: 0, y: y))
+                pY.addLine(to: CGPoint(x: size.width, y: y))
+                context.stroke(pY, with: .color(Color.green.opacity(0.08)), lineWidth: 1)
+            }
+        }
+    }
+}
+
+struct BiometricScanlineView: View {
+    let scanLineOffset: CGFloat
+    
+    var body: some View {
+        Rectangle()
+            .fill(
+                LinearGradient(
+                    gradient: Gradient(colors: [.clear, Color.green.opacity(0.5), .clear]),
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            )
+            .frame(height: 6)
+            .offset(y: scanLineOffset)
+    }
+}
+
+struct CredentialRow: View {
+    let label: String
+    let placeholder: String
+    @Binding var text: String
+    
+    var body: some View {
+        HStack(spacing: 8) {
+            Text(label)
+                .font(.system(.caption, design: .monospaced))
+                .foregroundColor(.gray)
+                .frame(width: 70, alignment: .leading)
+            
+            TextField(placeholder, text: $text)
+                .font(.system(.subheadline, design: .monospaced))
+                .foregroundColor(.white)
+                .bold()
+                .textFieldStyle(PlainTextFieldStyle())
+                .padding(.horizontal, 6)
+                .padding(.vertical, 4)
+                .background(Color.black.opacity(0.5))
+                .border(Color.green.opacity(0.4), width: 1)
+        }
+    }
+}
+
