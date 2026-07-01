@@ -86,6 +86,14 @@ public class DatabaseManager {
                 t.column("message", .text).notNull()
                 t.column("timestamp", .datetime).notNull()
             }
+            
+            // Create investigatorNote table
+            try db.create(table: "investigatorNote", ifNotExists: true) { t in
+                t.column("id", .text).primaryKey()
+                t.column("caseId", .text).notNull().references("investigationCase", onDelete: .cascade)
+                t.column("content", .text).notNull()
+                t.column("updatedAt", .datetime).notNull()
+            }
         }
         
         try seedInitialData()
@@ -176,6 +184,45 @@ public class DatabaseManager {
                     secretPrompt: "You are Elena Rostova, a cold, elegant, and powerful black-market broker. You treat the detective with polite amusement. You have a solid alibi and know the law. You will tell them that you know Dr. Vance, but only as a buyer of rare chemical formulas. You claim to have no knowledge of any poison. If the detective accuses you without solid proof, you mock them. Keep replies cold, short, and poised."
                 )
                 try suspect2.insert(db)
+                
+                // Seed Case 2 (The Courier)
+                let case2Id = UUID(uuidString: "88888888-8888-8888-8888-888888888888")!
+                var courierCase = Case(
+                    id: case2Id,
+                    title: "The Shadow Courier",
+                    codename: "The Courier",
+                    summary: "A courier has been intercepted at a border checkpoint with a locked briefcase containing schematics for a custom neural-active trigger. Cross-reference municipal database files to locate their drop point.",
+                    status: "locked",
+                    unlockedAt: Date().addingTimeInterval(3600)
+                )
+                try courierCase.insert(db)
+                
+                // Seed Clues for Case 2
+                var courierClue1 = Clue(
+                    id: UUID(),
+                    caseId: case2Id,
+                    title: "Border Checkpoint Briefcase",
+                    type: "document",
+                    mediaPath: "courier_ledger.txt",
+                    transcript: "Found inside the double lining of the case: a logistics routing map referencing 'Warehouse 4' and a delivery contact 'Rostova Art Logistics'.",
+                    discoveryStatus: "unlocked"
+                )
+                try courierClue1.insert(db)
+                
+                // Seed Suspect for Case 2
+                var courierSuspect1 = Suspect(
+                    id: UUID(),
+                    caseId: case2Id,
+                    name: "Viktor Cruz",
+                    photoPath: "cruz.png",
+                    alibi: "Claims he was just a delivery driver hired via an online courier app, with no knowledge of the classified contents.",
+                    profileNotes: "Known associate of shipping ports. Linked to smuggling operations in Eastern European routes.",
+                    interrogationLimit: 10,
+                    questionsAsked: 0,
+                    isGuilty: true,
+                    secretPrompt: "You are Viktor Cruz, a smuggling courier. You act dumb and pretend to be a simple driver. If they mention 'Warehouse 4', you panic. Keep replies brief."
+                )
+                try courierSuspect1.insert(db)
             }
         }
     }
@@ -251,6 +298,32 @@ public class DatabaseManager {
         guard let dbQueue = dbQueue else { return }
         try? dbQueue.write { db in
             try db.execute(sql: "UPDATE suspect SET questionsAsked = questionsAsked + 1 WHERE id = ?", arguments: [suspectId.uuidString])
+        }
+    }
+    
+    public func fetchNote(caseId: UUID) -> InvestigatorNote? {
+        guard let dbQueue = dbQueue else { return nil }
+        return (try? dbQueue.read { db in
+            try InvestigatorNote.fetchOne(db, sql: "SELECT * FROM investigatorNote WHERE caseId = ?", arguments: [caseId.uuidString])
+        })
+    }
+    
+    public func saveNote(_ note: InvestigatorNote) {
+        guard let dbQueue = dbQueue else { return }
+        try? dbQueue.write { db in
+            var mutableNote = note
+            try mutableNote.save(db)
+        }
+    }
+    
+    public func solveCase(caseId: UUID) {
+        guard let dbQueue = dbQueue else { return }
+        try? dbQueue.write { db in
+            // Set current case to solved
+            try db.execute(sql: "UPDATE investigationCase SET status = 'solved' WHERE id = ?", arguments: [caseId.uuidString])
+            // Unlock next case (The Courier)
+            let nextCaseId = UUID(uuidString: "88888888-8888-8888-8888-888888888888")!
+            try db.execute(sql: "UPDATE investigationCase SET status = 'active' WHERE id = ?", arguments: [nextCaseId.uuidString])
         }
     }
 }
