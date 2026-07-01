@@ -138,7 +138,7 @@ public class DatabaseManager {
                     type: "image",
                     mediaPath: "lab_blueprint.png",
                     transcript: "Image shows a schematic of a specialized glass distillation rig with hand-drawn annotations matching Dr. Vance's personal notebook handwriting. A serial number is visible: 'TX-409-R'.",
-                    discoveryStatus: "analyzed"
+                    discoveryStatus: "unlocked"
                 )
                 try clue2.insert(db)
                 

@@ -7,7 +7,7 @@ struct ContentView: View {
     @State private var activeTab: SidebarTab = .dashboard
     
     enum SidebarTab {
-        case dashboard, corkboard, database, signal, decryption, interrogation
+        case dashboard, corkboard, database, notepad, signal, triangulation, decryption, interrogation, imageInspector, accusation, profile
     }
     
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
@@ -26,6 +26,12 @@ struct ContentView: View {
                                 }
                                 .tag(SidebarTab.dashboard)
                             
+                            DetectiveProfileView()
+                                .tabItem {
+                                    Label("Profile", systemImage: "person.crop.square.badge.camera")
+                                }
+                                .tag(SidebarTab.profile)
+                            
                             CorkboardView(caseId: caseFolder.id, clues: $clues)
                                 .tabItem {
                                     Label("Corkboard", systemImage: "lasso.and.app.badge")
@@ -38,11 +44,23 @@ struct ContentView: View {
                                 }
                                 .tag(SidebarTab.database)
                             
+                            NotepadView(caseId: caseFolder.id)
+                                .tabItem {
+                                    Label("Notepad", systemImage: "square.and.pencil")
+                                }
+                                .tag(SidebarTab.notepad)
+                            
                             AudioSpectrogramView()
                                 .tabItem {
                                     Label("Signal", systemImage: "waveform.path")
                                 }
                                 .tag(SidebarTab.signal)
+                            
+                            CellTriangulationView()
+                                .tabItem {
+                                    Label("Triangulate", systemImage: "location.magnifyingglass")
+                                }
+                                .tag(SidebarTab.triangulation)
                             
                             HackingMinigameView()
                                 .tabItem {
@@ -55,6 +73,20 @@ struct ContentView: View {
                                     Label("Interrogate", systemImage: "bubble.left.and.exclamationmark.bubble.right")
                                 }
                                 .tag(SidebarTab.interrogation)
+                            
+                            ImageInspectorView(clues: $clues)
+                                .tabItem {
+                                    Label("Inspector", systemImage: "magnifyingglass")
+                                }
+                                .tag(SidebarTab.imageInspector)
+                            
+                            AccusationView(caseId: caseFolder.id) {
+                                loadInitialData()
+                            }
+                            .tabItem {
+                                Label("Accuse", systemImage: "shield.slash")
+                            }
+                            .tag(SidebarTab.accusation)
                         } else {
                             ProgressView("LOADING SYSTEM SEEDS...")
                                 .tint(.green)
@@ -94,6 +126,14 @@ struct ContentView: View {
                                     }
                                     
                                     SidebarButton(
+                                        title: "DETECTIVE PROFILE",
+                                        icon: "person.crop.square.badge.camera",
+                                        isActive: activeTab == .profile
+                                    ) {
+                                        activeTab = .profile
+                                    }
+                                    
+                                    SidebarButton(
                                         title: "CORKBOARD",
                                         icon: "lasso.and.app.badge",
                                         isActive: activeTab == .corkboard
@@ -110,11 +150,27 @@ struct ContentView: View {
                                     }
                                     
                                     SidebarButton(
+                                        title: "INVESTIGATOR NOTES",
+                                        icon: "square.and.pencil",
+                                        isActive: activeTab == .notepad
+                                    ) {
+                                        activeTab = .notepad
+                                    }
+                                    
+                                    SidebarButton(
                                         title: "SIGNAL ANALYZER",
                                         icon: "waveform.path",
                                         isActive: activeTab == .signal
                                     ) {
                                         activeTab = .signal
+                                    }
+                                    
+                                    SidebarButton(
+                                        title: "CELL TRIANGULATION",
+                                        icon: "location.magnifyingglass",
+                                        isActive: activeTab == .triangulation
+                                    ) {
+                                        activeTab = .triangulation
                                     }
                                     
                                     SidebarButton(
@@ -131,6 +187,22 @@ struct ContentView: View {
                                         isActive: activeTab == .interrogation
                                     ) {
                                         activeTab = .interrogation
+                                    }
+                                    
+                                    SidebarButton(
+                                        title: "IMAGE INSPECTOR",
+                                        icon: "magnifyingglass",
+                                        isActive: activeTab == .imageInspector
+                                    ) {
+                                        activeTab = .imageInspector
+                                    }
+                                    
+                                    SidebarButton(
+                                        title: "ACCUSATION PORTAL",
+                                        icon: "shield.slash",
+                                        isActive: activeTab == .accusation
+                                    ) {
+                                        activeTab = .accusation
                                     }
                                 }
                                 .padding(.horizontal, 8)
@@ -160,16 +232,28 @@ struct ContentView: View {
                                 switch activeTab {
                                 case .dashboard:
                                     DashboardView(activeCase: caseFolder, clues: $clues, suspects: $suspects)
+                                case .profile:
+                                    DetectiveProfileView()
                                 case .corkboard:
                                     CorkboardView(caseId: caseFolder.id, clues: $clues)
                                 case .database:
                                     DatabaseQueryView()
+                                case .notepad:
+                                    NotepadView(caseId: caseFolder.id)
                                 case .signal:
                                     AudioSpectrogramView()
+                                case .triangulation:
+                                    CellTriangulationView()
                                 case .decryption:
                                     HackingMinigameView()
                                 case .interrogation:
                                     InterrogationView(caseId: caseFolder.id, suspects: $suspects)
+                                case .imageInspector:
+                                    ImageInspectorView(clues: $clues)
+                                case .accusation:
+                                    AccusationView(caseId: caseFolder.id) {
+                                        loadInitialData()
+                                    }
                                 }
                             } else {
                                 ProgressView("LOADING SYSTEM SEEDS...")
