@@ -137,6 +137,15 @@ struct AudioSpectrogramView: View {
             Spacer()
         }
         .padding()
+        .onAppear {
+            if UserDefaults.standard.bool(forKey: "signal_solved") {
+                isHighFreqFiltered = true
+                isDeNoised = true
+                isVocalIsolated = false
+                isPlaying = true
+                runSignalAnalysis()
+            }
+        }
     }
     
     private var isAnalysisUnlocked: Bool {
@@ -183,6 +192,7 @@ struct AudioSpectrogramView: View {
         switch (isHighFreqFiltered, isDeNoised, isVocalIsolated) {
         case (true, true, false):
             analysisOutput = "🟢 SIGNAL INTRUSION EXTRACTED SUCCESSFULLY!\n\nBACKGROUND REVERB EXPOSED: Distinct train horn sequence detected at 400Hz frequency cycles. Cross-referencing timetable: Matches 'Cargo Train Express' passing Cargo Warehouse 4 adjacent to Airport Terminal 4. Dr. Vance was in the warehouse area at 4:15 PM!"
+            UserDefaults.standard.set(true, forKey: "signal_solved")
         case (false, false, true):
             analysisOutput = "🟡 VOCALS AMPLIFIED. Vance: 'The delivery is delayed... formulation degrades at room temperature.' Reverb is heavily muffled by vocal boost. Background details are masked."
         case (true, false, false):
