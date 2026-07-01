@@ -1,0 +1,7 @@
+.DS_Store
+.build/
+.swiftpm/xcode/xcuserdata/
+.swiftpm/xcode/DerivedData/
+build.log
+*.xcresult/
+DerivedData/
