@@ -106,3 +106,19 @@ public struct InterrogationLog: Codable, FetchableRecord, MutablePersistableReco
         self.timestamp = timestamp
     }
 }
+
+public struct InvestigatorNote: Codable, FetchableRecord, MutablePersistableRecord, Identifiable, Hashable {
+    public static var databaseTableName: String { "investigatorNote" }
+    
+    public var id: UUID
+    public var caseId: UUID
+    public var content: String
+    public var updatedAt: Date
+    
+    public init(id: UUID, caseId: UUID, content: String, updatedAt: Date) {
+        self.id = id
+        self.caseId = caseId
+        self.content = content
+        self.updatedAt = updatedAt
+    }
+}
